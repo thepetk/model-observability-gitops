@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: model-monitoring
 
 resources:
+  - grafana-rbac.yaml
   - grafana.yaml
   - grafana-datasource.yaml
   - grafana-folder.yaml
