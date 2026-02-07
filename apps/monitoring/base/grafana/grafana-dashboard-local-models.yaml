@@ -39,7 +39,7 @@ spec:
           ]
         },
         {
-          "type": "timeseries",
+          "type": "stat",
           "title": "GPU Memory Used (MiB)",
           "gridPos": { "x": 12, "y": 15, "w": 12, "h": 9 },
           "targets": [
@@ -50,7 +50,7 @@ spec:
           ]
         },
         {
-          "type": "timeseries",
+          "type": "stat",
           "title": "GPU Utilization by node (%)",
           "gridPos": { "x": 0, "y": 24, "w": 12, "h": 9 },
           "targets": [
@@ -61,7 +61,7 @@ spec:
           ]
         },
         {
-          "type": "timeseries",
+          "type": "stat",
           "title": "Predictor pods by node",
           "gridPos": { "x": 12, "y": 24, "w": 12, "h": 9 },
           "targets": [
