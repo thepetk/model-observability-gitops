@@ -8,10 +8,10 @@ spec:
     - name: local-models.health
       rules:
         - alert: LocalModelTargetsDown
-          expr: sum(up{namespace="vllm"}) == 0
+          expr: sum(up{namespace="vllm", pod=~".*predictor.*"}) == 0
           for: 5m
           labels:
             severity: warning
           annotations:
-            summary: "Local model scrape targets are down"
-            description: "Prometheus is not scraping any targets in namespace vllm for 5 minutes (predictor monitoring likely broken)."
+            summary: "Local model predictor scrape targets are down"
+            description: "Prometheus is not scraping any predictor pod targets in namespace vllm for 5 minutes."
