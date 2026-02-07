@@ -70,6 +70,7 @@ Keys:
 
 - `username`
 - `password`
+- `token` — Bearer token for Prometheus access (service account token with `cluster-monitoring-view` role)
 
 ### Robotheus
 
