@@ -84,7 +84,7 @@ Keys:
 
 ## Installation
 
-1. Ensure the **Grafana Operator** is installed on the cluster (via OperatorHub / OLM)
+1. Ensure the **Grafana Operator** and **Prometheus Operator** are installed on the cluster (via OperatorHub / OLM)
 2. Apply Argo CD Project + Application from `argocd/`
 3. Argo CD syncs `apps/monitoring/overlays/dev`
 4. Monitoring namespace is created
@@ -95,6 +95,7 @@ Keys:
 ## Important Notes
 
 - **Grafana Operator** must be installed on the cluster (via OperatorHub or manual install)
+- **Prometheus Operator** must be installed on the cluster (provides `PodMonitor`, `ServiceMonitor`, and `PrometheusRule` CRDs)
 - Prometheus must already be present in the cluster
 - NVIDIA GPU Operator + DCGM exporter must already be installed
 
