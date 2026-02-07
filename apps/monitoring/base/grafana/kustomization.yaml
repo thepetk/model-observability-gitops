@@ -15,6 +15,7 @@ configMapGenerator:
   - name: grafana-dashboards
     files:
       - local-models-dashboard.json=dashboards/local-models-dashboard.json
+      - external-usage-dashboard.json=dashboards/ai-providers-dashboard.json
 
 generatorOptions:
   disableNameSuffixHash: true
