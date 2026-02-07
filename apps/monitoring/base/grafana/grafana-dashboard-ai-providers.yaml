@@ -1,0 +1,76 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ai-providers
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  folderRef: gitops
+  json: >
+    {
+      "uid": "ai-providers",
+      "title": "AI Providers Usage (via robotheus)",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "1m",
+      "timezone": "browser",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "RobotHeus target up",
+          "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max(up{job=~\".*robotheus.*\"})",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "OpenAI tokens/sec (input+output)",
+          "gridPos": { "x": 6, "y": 0, "w": 18, "h": 9 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(rate(robotheus_openai_tokens_total[5m]))"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "OpenAI cost/day (USD)",
+          "gridPos": { "x": 0, "y": 9, "w": 12, "h": 9 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(robotheus_openai_cost_usd_total[1d]))"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Gemini tokens/sec (input+output)",
+          "gridPos": { "x": 12, "y": 9, "w": 12, "h": 9 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(rate(robotheus_gemini_tokens_total[5m]))"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Gemini cost/day (USD)",
+          "gridPos": { "x": 0, "y": 18, "w": 12, "h": 9 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(robotheus_gemini_cost_usd_total[1d]))"
+            }
+          ]
+        }
+      ]
+    }

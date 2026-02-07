@@ -14,9 +14,11 @@ Everything is deployed declaratively using **Argo CD and Kustomize**.
 
 ### Grafana
 
+- Managed by the [Grafana Operator](https://github.com/grafana/grafana-operator) (`grafana.integreatly.org/v1beta1`)
 - Runs in `model-monitoring` namespace
-- Dashboards are provisioned from Git (see [dashboards dir](./apps/monitoring/base/grafana/dashboard/)).
-- Prometheus datasource is configured automatically (we're using the http://prometheus-operated.monitoring.svc:9090 address)
+- Dashboards are declared as `GrafanaDashboard` CRDs (see [grafana dir](./apps/monitoring/base/grafana/))
+- Prometheus datasource is configured via `GrafanaDatasource` CRD (`http://prometheus-operated.monitoring.svc:9090`)
+- All resources connect to the Grafana instance via `instanceSelector: { dashboards: "grafana" }`
 
 #### Dashboards
 
@@ -82,14 +84,17 @@ Keys:
 
 ## Installation
 
-1. Apply Argo CD Project + Application from `argocd/`
-2. Argo CD syncs `apps/monitoring/overlays/dev`
-3. Monitoring namespace is created
-4. Grafana, Robotheus, PodMonitors, ServiceMonitors, and alerts are deployed
-5. Dashboards appear automatically in Grafana under folder **GitOps**
+1. Ensure the **Grafana Operator** is installed on the cluster (via OperatorHub / OLM)
+2. Apply Argo CD Project + Application from `argocd/`
+3. Argo CD syncs `apps/monitoring/overlays/dev`
+4. Monitoring namespace is created
+5. Grafana CR, datasource, folder, and dashboards are reconciled by the operator
+6. Robotheus, PodMonitors, ServiceMonitors, and alerts are deployed
+7. Dashboards appear automatically in Grafana under folder **GitOps**
 
 ## Important Notes
 
+- **Grafana Operator** must be installed on the cluster (via OperatorHub or manual install)
 - Prometheus must already be present in the cluster
 - NVIDIA GPU Operator + DCGM exporter must already be installed
 
