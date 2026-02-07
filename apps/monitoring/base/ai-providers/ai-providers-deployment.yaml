@@ -25,12 +25,12 @@ spec:
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: external-usage-exporter-secret
+                  name: robotheus-secrets
                   key: OPENAI_API_KEY
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: robotheus-secret
+                  name: robotheus-secrets
                   key: GEMINI_API_KEY
           resources:
             requests:
