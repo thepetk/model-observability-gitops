@@ -1,21 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: dcgm-exporter
+  name: robotheus
   namespace: model-monitoring
   labels:
-    app: dcgm-exporter
+    app: robotheus
 spec:
   namespaceSelector:
     matchNames:
-      - nvidia-gpu-operator
+      - monitoring
   selector:
     matchLabels:
-      app: nvidia-dcgm-exporter
+      app: robotheus
   endpoints:
     - port: metrics
-      interval: 30s
       path: /metrics
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_pod_node_name]
-          targetLabel: node
+      interval: 30s

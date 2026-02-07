@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-usage-exporter
+  labels:
+    app: external-usage-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: external-usage-exporter
+  template:
+    metadata:
+      labels:
+        app: external-usage-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: ghcr.io/thepetk/robotheus:latest
+          ports:
+            - name: metrics
+              containerPort: 9185
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: external-usage-exporter-secret
+                  key: OPENAI_API_KEY
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: robotheus-secret
+                  key: GEMINI_API_KEY
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: robotheus
+  labels:
+    app: robotheus
+spec:
+  selector:
+    app: robotheus
+  ports:
+    - name: metrics
+      port: 9185
+      targetPort: metrics
