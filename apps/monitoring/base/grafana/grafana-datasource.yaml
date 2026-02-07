@@ -10,6 +10,6 @@ spec:
     name: Prometheus
     type: prometheus
     access: proxy
-    url: http://prometheus-k8s.openshift-monitoring.svc:9091
+    url: https://prometheus-k8s.openshift-monitoring.svc:9091
     isDefault: true
     editable: false
