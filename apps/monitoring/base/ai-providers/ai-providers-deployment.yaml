@@ -27,11 +27,6 @@ spec:
                 secretKeyRef:
                   name: robotheus-secrets
                   key: OPENAI_API_KEY
-            - name: GEMINI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: robotheus-secrets
-                  key: GEMINI_API_KEY
           resources:
             requests:
               cpu: 50m
