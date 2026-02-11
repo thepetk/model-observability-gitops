@@ -47,7 +47,8 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg by (instance, gpu) (DCGM_FI_DEV_FB_USED)"
+              "expr": "avg by (instance, gpu) (DCGM_FI_DEV_FB_USED)",
+              "instant": true
             }
           ]
         },
@@ -58,7 +59,8 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg by (node) (DCGM_FI_DEV_GPU_UTIL)"
+              "expr": "avg by (node) (DCGM_FI_DEV_GPU_UTIL)",
+              "instant": true
             }
           ]
         },
@@ -69,7 +71,8 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "count by (node) (kube_pod_info{namespace=\"vllm\", pod=~\".*predictor.*\"})"
+              "expr": "count by (node) (kube_pod_info{namespace=\"vllm\", pod=~\".*predictor.*\"})",
+              "instant": true
             }
           ]
         }
