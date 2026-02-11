@@ -43,14 +43,29 @@ spec:
           ]
         },
         {
-          "type": "stat",
-          "title": "GPU Memory Used (MiB)",
+          "type": "gauge",
+          "title": "GPU Memory Utilization (%)",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 12, "y": 15, "w": 12, "h": 9 },
+          "fieldConfig": {
+            "defaults": {
+              "min": 0,
+              "max": 100,
+              "unit": "percent",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 60 },
+                  { "color": "red", "value": 85 }
+                ]
+              }
+            }
+          },
           "targets": [
             {
               "refId": "A",
-              "expr": "avg by (instance, gpu) (DCGM_FI_DEV_FB_USED)",
+              "expr": "100 * (max by (Hostname, gpu) (DCGM_FI_DEV_FB_USED) / on (Hostname, gpu) (max by (Hostname, gpu) (DCGM_FI_DEV_FB_USED) + max by (Hostname, gpu) (DCGM_FI_DEV_FB_FREE)))",
               "instant": true
             }
           ]
