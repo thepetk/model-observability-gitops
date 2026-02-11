@@ -71,7 +71,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "count by (node) (kube_pod_info{namespace=\"vllm\", pod=~\".*predictor.*\"})",
+              "expr": "count by (node) (group by (pod, node) (kube_pod_info{namespace=\"vllm\", pod=~\".*predictor.*\"}))",
               "instant": true
             }
           ]
