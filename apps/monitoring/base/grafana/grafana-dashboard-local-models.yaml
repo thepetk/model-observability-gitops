@@ -21,6 +21,7 @@ spec:
         {
           "type": "timeseries",
           "title": "CPU Usage (predictor pods)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 0, "y": 6, "w": 24, "h": 9 },
           "targets": [
             {
@@ -32,6 +33,7 @@ spec:
         {
           "type": "timeseries",
           "title": "GPU Utilization (%)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 0, "y": 15, "w": 12, "h": 9 },
           "targets": [
             {
@@ -43,6 +45,7 @@ spec:
         {
           "type": "stat",
           "title": "GPU Memory Used (MiB)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 12, "y": 15, "w": 12, "h": 9 },
           "targets": [
             {
@@ -55,6 +58,7 @@ spec:
         {
           "type": "stat",
           "title": "GPU Utilization by node (%)",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 0, "y": 24, "w": 12, "h": 9 },
           "targets": [
             {
@@ -67,11 +71,12 @@ spec:
         {
           "type": "stat",
           "title": "Predictor pods by node",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 12, "y": 24, "w": 12, "h": 9 },
           "targets": [
             {
               "refId": "A",
-              "expr": "count by (node) (max by (pod, node) (kube_pod_info{namespace="vllm", pod=~".*predictor.*"}))",
+              "expr": "count by (node) (max by (pod, node) (kube_pod_info{namespace=\"vllm\", pod=~\".*predictor.*\"}))",
               "instant": true
             }
           ]
