@@ -55,7 +55,7 @@ GPU metrics are scraped from DCGM exporter using `ServiceMonitor`.
 
 Alerts are set via `PrometheusRule` and routed through `AlertmanagerConfig`:
 
-- **LocalModelTargetsDown** (warning) — fires when no predictor scrape targets are up for 5 minutes
+- **LocalModelTargetsDown** (warning) — fires when no predictor scrape targets are up for 1 hour.
 - **RobotheusTargetsDown** (warning) — fires when Robotheus scrape targets are down
 - **VllmPodNotReady** (critical, Slack) — fires when any pod in the `vllm` namespace is stuck in Pending or Failed phase for more than 1 hour
 
