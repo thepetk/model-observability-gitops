@@ -20,10 +20,10 @@ spec:
       httpHeaderName1: Authorization
       tlsSkipVerify: true
     secureJsonData:
-      httpHeaderValue1: "${token}"
+      httpHeaderValue1: "Bearer ${token}"
   valuesFrom:
     - targetPath: "secureJsonData.httpHeaderValue1"
       valueFrom:
         secretKeyRef:
-          name: grafana-admin
+          name: grafana-sa-token
           key: token
