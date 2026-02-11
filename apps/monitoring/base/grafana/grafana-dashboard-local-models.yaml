@@ -229,6 +229,33 @@ spec:
               "instant": true
             }
           ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Predictor Traffic (req/s) by pod",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 38, "w": 24, "h": 9 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (pod) (rate(http_requests_total{namespace=\"vllm\", pod=~\".*predictor.*\"}[5m]))",
+              "legendFormat": "{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": ["lastNotNull", "max", "mean"]
+            },
+            "tooltip": { "mode": "single" }
+          }
         }
       ]
     }
