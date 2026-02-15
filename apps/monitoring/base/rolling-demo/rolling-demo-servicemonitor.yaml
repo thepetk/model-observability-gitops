@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rhdh-metrics
+  namespace: rolling-demo-ns
+spec:
+  namespaceSelector:
+    matchNames:
+      - rolling-demo-ns
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rolling-demo-backstage
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
