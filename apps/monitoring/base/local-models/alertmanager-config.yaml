@@ -17,9 +17,11 @@ spec:
     - name: slack-receiver
       slackConfigs:
         - apiURL:
-            name: slack-webhook-secret
+            name: webhook-secret
             key: webhook-url
-          channel: "#team-rhdh-ai-devcluster-alerts"
+          channel:
+            name: webhook-secret
+            key: webhook-channel
           sendResolved: true
           title: '{{ if eq .Status "firing" }}[FIRING]{{ else }}[RESOLVED]{{ end }} {{ .CommonLabels.alertname }}'
           text: >-
