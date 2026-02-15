@@ -11,247 +11,121 @@ spec:
   folderRef: gitops
   json: >
     {
-      "uid": "rhdh-core-health",
-      "title": "RHDH Core Health (Service, Catalog, Tasks, Node Pressure)",
+      "uid": "rolling-demo-health",
+      "title": "RHDH Core Health",
       "schemaVersion": 39,
       "version": 1,
       "refresh": "30s",
       "timezone": "browser",
-      "templating": {
-        "list": [
-          {
-            "type": "query",
-            "name": "job",
-            "label": "RHDH Job",
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "query": "label_values(target_info, job)",
-            "refresh": 2,
-            "sort": 1,
-            "multi": false,
-            "includeAll": false
-          }
-        ]
-      },
       "panels": [
+
         {
           "type": "row",
-          "title": "Service Up & Responding",
-          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
-          "collapsed": false
+          "title": "Service Availability & Latency",
+          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 }
         },
+
         {
           "type": "stat",
           "title": "Scrape Target Up",
-          "description": "1 = Prometheus can scrape RHDH metrics, 0 = cannot.",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "gridPos": { "x": 0, "y": 1, "w": 6, "h": 6 },
-          "fieldConfig": {
-            "defaults": {
-              "mappings": [
-                { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
-              ],
-              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
-            }
-          },
           "targets": [
             {
-              "refId": "A",
-              "expr": "max(up{job=\"$job\"})",
+              "expr": "max(up)",
               "instant": true
             }
           ]
         },
-        {
-          "type": "stat",
-          "title": "Target Info Present",
-          "description": "Presence signal from target_info for the selected job.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 6, "y": 1, "w": 6, "h": 6 },
-          "fieldConfig": {
-            "defaults": {
-              "mappings": [
-                { "type": "value", "options": { "1": { "text": "PRESENT", "color": "green" }, "0": { "text": "MISSING", "color": "red" } } }
-              ],
-              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
-            }
-          },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(target_info{job=\"$job\"} > 0)",
-              "instant": true
-            }
-          ]
-        },
+
         {
           "type": "timeseries",
-          "title": "Inbound HTTP Duration p95",
-          "description": "95th percentile inbound request duration from http_server_duration (job-scoped).",
+          "title": "Inbound HTTP p95",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 1, "w": 12, "h": 6 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 6, "y": 1, "w": 18, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
           "targets": [
             {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_duration_bucket{job=\"$job\"}[10m])))"
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_duration_bucket[10m])))"
             }
           ]
         },
 
         {
           "type": "row",
-          "title": "Catalog Health & Progress",
-          "gridPos": { "x": 0, "y": 7, "w": 24, "h": 1 },
-          "collapsed": false
+          "title": "Catalog Health",
+          "gridPos": { "x": 0, "y": 7, "w": 24, "h": 1 }
         },
+
+        {
+          "type": "stat",
+          "title": "Catalog Entities",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 8, "w": 6, "h": 6 },
+          "targets": [
+            { "expr": "max(catalog_entities_count)", "instant": true }
+          ]
+        },
+
         {
           "type": "timeseries",
-          "title": "Catalog Processed Entities / sec",
-          "description": "Processing throughput over time.",
+          "title": "Catalog Processing Rate",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 8, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "ops", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 6, "y": 8, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "ops" } },
+          "targets": [
+            { "expr": "rate(catalog_processed_entities_count_total[5m])" }
+          ]
+        },
+
+        {
+          "type": "timeseries",
+          "title": "Processing Duration p95",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 18, "y": 8, "w": 6, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
           "targets": [
             {
-              "refId": "A",
-              "expr": "sum(rate(catalog_processed_entities_count_total{job=\"$job\"}[5m]))"
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(catalog_processing_duration_bucket[10m])))"
             }
           ]
         },
+
         {
-          "type": "stat",
-          "title": "Catalog Entities Count",
-          "description": "Current number of entities in the catalog.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 8, "w": 4, "h": 7 },
-          "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(catalog_entities_count{job=\"$job\"})",
-              "instant": true
-            }
-          ]
-        },
-        {
-          "type": "stat",
+          "type": "timeseries",
           "title": "Catalog Queue Length",
-          "description": "Entities waiting for stitching.",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 16, "y": 8, "w": 4, "h": 7 },
-          "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 25 }] } } },
+          "gridPos": { "x": 0, "y": 14, "w": 12, "h": 6 },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "max(catalog_stitching_queue_length{job=\"$job\"})",
-              "instant": true
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "Catalog Processing Duration p95",
-          "description": "95th percentile of catalog_processing_duration.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 20, "y": 8, "w": 4, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(catalog_processing_duration_bucket{job=\"$job\"}[10m])))"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "Catalog Queue Delay p95",
-          "description": "95th percentile delay in processing queue.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 15, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(catalog_processing_queue_delay_bucket{job=\"$job\"}[10m])))"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "Catalog Stitching Queue Delay p95",
-          "description": "95th percentile delay in stitching queue.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 15, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(catalog_stitching_queue_delay_bucket{job=\"$job\"}[10m])))"
-            }
+            { "expr": "catalog_stitching_queue_length" }
           ]
         },
 
         {
           "type": "row",
           "title": "Backend Tasks",
-          "gridPos": { "x": 0, "y": 22, "w": 24, "h": 1 },
-          "collapsed": false
+          "gridPos": { "x": 0, "y": 20, "w": 24, "h": 1 }
         },
+
         {
           "type": "timeseries",
-          "title": "Task Runs / sec",
-          "description": "Rate of backend task executions.",
+          "title": "Task Run Rate",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 23, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "ops", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 0, "y": 21, "w": 12, "h": 6 },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "sum(rate(backend_tasks_task_runs_count_total{job=\"$job\"}[5m]))"
-            }
+            { "expr": "rate(backend_tasks_task_runs_count_total[5m])" }
           ]
         },
+
         {
           "type": "timeseries",
-          "title": "Task Run Duration p95",
-          "description": "95th percentile task run duration.",
+          "title": "Task Duration p95",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 23, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 12, "y": 21, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
           "targets": [
             {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(backend_tasks_task_runs_duration_bucket{job=\"$job\"}[10m])))"
-            }
-          ]
-        },
-        {
-          "type": "stat",
-          "title": "Last Task Started (Epoch)",
-          "description": "Timestamp (seconds since epoch) when a task was last started.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 30, "w": 12, "h": 6 },
-          "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(backend_tasks_task_runs_started{job=\"$job\"})",
-              "instant": true
-            }
-          ]
-        },
-        {
-          "type": "stat",
-          "title": "Last Task Completed (Epoch)",
-          "description": "Timestamp (seconds since epoch) when a task was last completed.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 30, "w": 12, "h": 6 },
-          "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(backend_tasks_task_runs_completed{job=\"$job\"})",
-              "instant": true
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(backend_tasks_task_runs_duration_bucket[10m])))"
             }
           ]
         },
@@ -259,121 +133,52 @@ spec:
         {
           "type": "row",
           "title": "Node / Process Pressure",
-          "gridPos": { "x": 0, "y": 36, "w": 24, "h": 1 },
-          "collapsed": false
+          "gridPos": { "x": 0, "y": 27, "w": 24, "h": 1 }
         },
+
         {
           "type": "timeseries",
           "title": "Event Loop Utilization",
-          "description": "nodejs_eventloop_utilization (0-1).",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 37, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "percentunit", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 0, "y": 28, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "percentunit" } },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "max(nodejs_eventloop_utilization{job=\"$job\"})"
-            }
+            { "expr": "nodejs_eventloop_utilization" }
           ]
         },
+
         {
           "type": "timeseries",
           "title": "Event Loop Delay p99",
-          "description": "nodejs_eventloop_delay_p99 (seconds).",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 37, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 12, "y": 28, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "max(nodejs_eventloop_delay_p99{job=\"$job\"})"
-            }
+            { "expr": "nodejs_eventloop_delay_p99" }
           ]
         },
-        {
-          "type": "timeseries",
-          "title": "GC Duration p95",
-          "description": "95th percentile of v8js_gc_duration by kind.",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 44, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "histogram_quantile(0.95, sum by (le, kind) (rate(v8js_gc_duration_bucket{job=\"$job\"}[10m])))",
-              "legendFormat": "{{ kind }}"
-            }
-          ]
-        },
+
         {
           "type": "timeseries",
           "title": "Heap Used",
-          "description": "v8js_memory_heap_used (bytes).",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 44, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 0, "y": 34, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "max(v8js_memory_heap_used{job=\"$job\"})"
-            }
+            { "expr": "v8js_memory_heap_used" }
           ]
         },
+
         {
           "type": "timeseries",
           "title": "Process CPU Utilization",
-          "description": "process_cpu_utilization (0-1).",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 51, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "percentunit", "custom": { "fillOpacity": 15 } } },
+          "gridPos": { "x": 12, "y": 34, "w": 12, "h": 6 },
+          "fieldConfig": { "defaults": { "unit": "percentunit" } },
           "targets": [
-            {
-              "refId": "A",
-              "expr": "max(process_cpu_utilization{job=\"$job\"})"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "Process Memory Usage",
-          "description": "process_memory_usage (bytes).",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 51, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(process_memory_usage{job=\"$job\"})"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "System CPU Utilization",
-          "description": "system_cpu_utilization (0-1).",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 0, "y": 58, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "percentunit", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(system_cpu_utilization{job=\"$job\"})"
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "System Memory Utilization",
-          "description": "system_memory_utilization (0-1).",
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "gridPos": { "x": 12, "y": 58, "w": 12, "h": 7 },
-          "fieldConfig": { "defaults": { "unit": "percentunit", "custom": { "fillOpacity": 15 } } },
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "max(system_memory_utilization{job=\"$job\"})"
-            }
+            { "expr": "process_cpu_utilization" }
           ]
         }
+
       ]
     }

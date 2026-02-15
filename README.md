@@ -102,18 +102,35 @@ Keys:
 ## Installation
 
 1. Ensure the **Grafana Operator** and **Prometheus Operator** are installed on the cluster (via OperatorHub / OLM)
-2. Apply Argo CD Project + Application from `argocd/`
-3. Argo CD syncs `apps/monitoring/overlays/dev`
-4. Monitoring namespace is created
-5. Grafana CR, datasource, folder, and dashboards are reconciled by the operator
-6. Robotheus, PodMonitors, ServiceMonitors, and alerts are deployed
-7. Dashboards appear automatically in Grafana under folder **GitOps**
+2. Enable **user-workload monitoring** on the cluster (required for ServiceMonitor scraping in user namespaces and AlertmanagerConfig):
+   ```bash
+   oc apply -f - <<EOF
+   apiVersion: v1
+   kind: ConfigMap
+   metadata:
+     name: cluster-monitoring-config
+     namespace: openshift-monitoring
+   data:
+     config.yaml: |
+       enableUserWorkload: true
+   EOF
+   ```
+   Verify by checking that pods appear in `openshift-user-workload-monitoring`:
+   ```bash
+   oc get pods -n openshift-user-workload-monitoring
+   ```
+3. Apply Argo CD Project + Application from `argocd/`
+4. Argo CD syncs `apps/monitoring/overlays/dev`
+5. Monitoring namespace is created
+6. Grafana CR, datasource, folder, and dashboards are reconciled by the operator
+7. Robotheus, PodMonitors, ServiceMonitors, and alerts are deployed
+8. Dashboards appear automatically in Grafana under folder **GitOps**
 
 ## Important Notes
 
 - **Grafana Operator** must be installed on the cluster (via OperatorHub or manual install)
 - **Prometheus Operator** must be installed on the cluster (provides `PodMonitor`, `ServiceMonitor`, `PrometheusRule`, and `AlertmanagerConfig` CRDs)
-- **User-workload-monitoring** must be enabled on OpenShift for `AlertmanagerConfig` to work
+- **User-workload monitoring** must be enabled on OpenShift (see Installation step 2) — required for scraping metrics from user namespaces (`rolling-demo-ns`, `vllm`, etc.) and for `AlertmanagerConfig` to work
 - Prometheus must already be present in the cluster
 - NVIDIA GPU Operator + DCGM exporter must already be installed
 
