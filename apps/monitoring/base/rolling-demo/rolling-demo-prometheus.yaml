@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rhdh-prometheus
+  namespace: rolling-demo-ns
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: rhdh-prometheus
+  namespace: rolling-demo-ns
+spec:
+  serviceAccountName: rhdh-prometheus
+  serviceMonitorSelector: {}
+  serviceMonitorNamespaceSelector:
+    matchNames:
+      - rolling-demo-ns
+  resources:
+    requests:
+      memory: 512Mi
+  retention: 24h

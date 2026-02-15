@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: model-monitoring
 resources:
   - rolling-demo-servicemonitor.yaml
+  - rolling-demo-prometheus.yaml
