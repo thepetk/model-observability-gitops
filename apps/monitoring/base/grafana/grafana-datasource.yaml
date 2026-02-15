@@ -25,5 +25,5 @@ spec:
     - targetPath: "secureJsonData.httpHeaderValue1"
       valueFrom:
         secretKeyRef:
-          name: grafana-sa-token
+          name: grafana-prometheus-sa-token
           key: token
