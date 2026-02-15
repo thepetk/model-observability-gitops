@@ -11,3 +11,4 @@ resources:
   - grafana-folder.yaml
   - grafana-dashboard-local-models.yaml
   - grafana-dashboard-ai-providers.yaml
+  - grafana-dashboard-rolling-demo.yaml

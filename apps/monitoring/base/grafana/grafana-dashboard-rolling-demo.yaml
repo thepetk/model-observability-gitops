@@ -1,0 +1,443 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: rolling-demo
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  folderRef: gitops
+  json: >
+    {
+      "uid": "rolling-demo",
+      "title": "Rolling Demo (RHDH & Namespace Health)",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "timezone": "browser",
+      "panels": [
+        {
+          "type": "row",
+          "title": "RHDH Instance Health",
+          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "type": "stat",
+          "title": "Readiness",
+          "description": "RHDH backend readiness probe status. 1 = UP, 0 = DOWN.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
+              ],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_endpoint_up{endpoint_id=\"backstage_readiness\"}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Liveness",
+          "description": "RHDH backend liveness probe status. 1 = UP, 0 = DOWN.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 4, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
+              ],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_endpoint_up{endpoint_id=\"backstage_liveness\"}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Probe Cycle",
+          "description": "Whether the last full probe cycle completed without errors. 1 = success, 0 = failure.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 8, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "OK", "color": "green" }, "0": { "text": "FAIL", "color": "red" } } }
+              ],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_cycle_success",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Missing Plugins",
+          "description": "Number of expected dynamic plugins missing from the loaded plugins list.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 12, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_expected_plugins_missing_total",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Loaded Plugins",
+          "description": "Total count of loaded dynamic plugins by role/platform.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 16, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(rhdh_probe_dynamic_plugins_loaded_total)",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Probe Cycle Duration",
+          "description": "Duration of the last probe cycle in seconds.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 20, "y": 1, "w": 4, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 10 }, { "color": "red", "value": 30 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_cycle_duration_seconds",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Endpoint Status",
+          "description": "Status of all probed RHDH endpoints showing up/down state, HTTP status code, and latency.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 7, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rhdh_probe_endpoint_up",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "B",
+              "expr": "rhdh_probe_endpoint_http_status_code",
+              "instant": true,
+              "format": "table"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": { "byField": "endpoint_id" }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time 1": true,
+                  "Time 2": true,
+                  "__name__ 1": true,
+                  "__name__ 2": true,
+                  "instance 1": true,
+                  "instance 2": true,
+                  "job 1": true,
+                  "job 2": true,
+                  "kind 2": true,
+                  "plugin 2": true
+                },
+                "renameByName": {
+                  "endpoint_id": "Endpoint",
+                  "kind 1": "Kind",
+                  "plugin 1": "Plugin",
+                  "Value #A": "Up",
+                  "Value #B": "HTTP Status"
+                }
+              }
+            }
+          ],
+          "options": {
+            "showHeader": true
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Endpoint Latency p95",
+          "description": "95th percentile probe latency per endpoint over a 10-minute window.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 12, "y": 7, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": { "unit": "s", "custom": { "fillOpacity": 15 } }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "histogram_quantile(0.95, sum by (le, endpoint_id) (rate(rhdh_probe_endpoint_latency_seconds_bucket[10m])))",
+              "legendFormat": "{{ endpoint_id }}"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Probe Failures by Reason",
+          "description": "Rate of endpoint probe failures broken down by failure reason (timeout, unexpected_status, validation, exception).",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 15, "w": 24, "h": 8 },
+          "fieldConfig": {
+            "defaults": { "unit": "ops", "custom": { "fillOpacity": 15 } }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (reason) (rate(rhdh_probe_endpoint_failures_total[5m]))",
+              "legendFormat": "{{ reason }}"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "Namespace Pod Health (rolling-demo-ns)",
+          "gridPos": { "x": 0, "y": 23, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "type": "table",
+          "title": "Pod Status",
+          "description": "Current phase of all pods in the rolling-demo-ns namespace.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "max by (pod, phase) (kube_pod_status_phase{namespace=\"rolling-demo-ns\", phase=~\"Running|Pending|Failed|Succeeded|Unknown\"} == 1)",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "labelsToFields",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value": true
+                },
+                "renameByName": {
+                  "pod": "Pod",
+                  "phase": "State"
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Pod": 1,
+                  "State": 2
+                }
+              }
+            }
+          ],
+          "options": {
+            "showHeader": true
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Running Pods",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 32, "w": 6, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "count(kube_pod_status_phase{namespace=\"rolling-demo-ns\", phase=\"Running\"} == 1) or vector(0)",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Failed Pods",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 6, "y": 32, "w": 6, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "count(kube_pod_status_phase{namespace=\"rolling-demo-ns\", phase=\"Failed\"} == 1) or vector(0)",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Pending Pods",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 12, "y": 32, "w": 6, "h": 6 },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 }] }
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "count(kube_pod_status_phase{namespace=\"rolling-demo-ns\", phase=\"Pending\"} == 1) or vector(0)",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Container Restarts",
+          "description": "Rate of container restarts for pods in rolling-demo-ns.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 18, "y": 32, "w": 6, "h": 6 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (pod) (rate(kube_pod_container_status_restarts_total{namespace=\"rolling-demo-ns\"}[5m]))",
+              "legendFormat": "{{ pod }}"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "CPU Usage by Pod",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 38, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "custom": { "fillOpacity": 15 } }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"rolling-demo-ns\", container!=\"\", image!=\"\"}[5m]))",
+              "legendFormat": "{{ pod }}"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Memory Usage by Pod",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 12, "y": 38, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": { "unit": "bytes", "custom": { "fillOpacity": 15 } }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=\"rolling-demo-ns\", container!=\"\", image!=\"\"})",
+              "legendFormat": "{{ pod }}"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "title": "ArgoCD Apps (rolling-demo, active > 2 days)",
+          "gridPos": { "x": 0, "y": 46, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "type": "table",
+          "title": "ArgoCD Applications (label: rolling-demo, active > 2 days)",
+          "description": "ArgoCD applications deployed to namespaces with the rolling-demo label that have been active for more than 2 days.",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "gridPos": { "x": 0, "y": 47, "w": 24, "h": 10 },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "argocd_app_info{dest_namespace=~\".*rolling-demo.*\"} and argocd_app_info{dest_namespace=~\".*rolling-demo.*\"} offset 2d",
+              "instant": true,
+              "format": "table"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "operation": true,
+                  "autosync_enabled": true,
+                  "dest_server": true
+                },
+                "renameByName": {
+                  "name": "Application",
+                  "dest_namespace": "Namespace",
+                  "project": "Project",
+                  "health_status": "Health",
+                  "sync_status": "Sync",
+                  "repo": "Repository"
+                },
+                "indexByName": {
+                  "Application": 0,
+                  "Namespace": 1,
+                  "Project": 2,
+                  "Health": 3,
+                  "Sync": 4,
+                  "Repository": 5
+                }
+              }
+            }
+          ],
+          "options": {
+            "showHeader": true
+          }
+        }
+      ]
+    }
