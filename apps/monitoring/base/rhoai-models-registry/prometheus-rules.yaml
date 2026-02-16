@@ -3,6 +3,8 @@ kind: PrometheusRule
 metadata:
   name: rhoai-models-registry-rules
   namespace: model-monitoring
+  labels:
+    openshift.io/prometheus-rule-evaluation-scope: leaf-prometheus
 spec:
   groups:
     - name: rhoai-models-registry.health
