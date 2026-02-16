@@ -21,6 +21,7 @@ rules:
   - apiGroups:
       - monitoring.coreos.com
     resources:
+      - alertmanagerconfigs
       - prometheusrules
       - servicemonitors
       - podmonitors
