@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: rhoai-models-registry-rules
-  namespace: model-monitoring
+  namespace: vllm
 spec:
   groups:
     - name: rhoai-models-registry.health

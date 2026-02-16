@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: rolling-demo-rules
-  namespace: model-monitoring
+  namespace: rolling-demo-ns
 spec:
   groups:
     - name: rolling-demo.health
