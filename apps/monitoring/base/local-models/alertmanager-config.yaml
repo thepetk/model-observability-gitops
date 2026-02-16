@@ -19,15 +19,29 @@ spec:
         - apiURL:
             name: webhook-secret
             key: webhook-url
-          channel:
-            name: webhook-secret
-            key: webhook-channel
           sendResolved: true
+          httpConfig:
+            followRedirects: true
           title: '{{ if eq .Status "firing" }}[FIRING]{{ else }}[RESOLVED]{{ end }} {{ .CommonLabels.alertname }}'
           text: >-
             {{ range .Alerts }}
-            *Alert:* {{ .Labels.alertname }}
-            *Severity:* {{ .Labels.severity }}
-            *Summary:* {{ .Annotations.summary }}
-            *Description:* {{ .Annotations.description }}
+
+            {{ if eq $.Status "firing" }}🔴 *[FIRING] {{ .Labels.alertname }}*{{ else }}✅ *[RESOLVED] {{ .Labels.alertname }}*{{ end }}
+
+            ━━━━━━━━━━━━━━━━━━━━━━━
+
+            *Severity:*  {{ if eq .Labels.severity "critical" }}🔥 critical{{ else }}⚠️ warning{{ end }}
+
+            *Namespace:*  `{{ .Labels.namespace }}`
+
+            {{ if .Labels.pod }}*Pod:*  `{{ .Labels.pod }}`{{ end }}
+
+            *Summary*
+
+            {{ .Annotations.summary }}
+
+            *Description*
+
+            {{ .Annotations.description }}
+
             {{ end }}
