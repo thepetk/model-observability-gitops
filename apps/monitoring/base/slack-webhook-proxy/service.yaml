@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: slack-webhook-proxy
+  namespace: model-monitoring
+  labels:
+    app: slack-webhook-proxy
+spec:
+  type: ClusterIP
+  selector:
+    app: slack-webhook-proxy
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP

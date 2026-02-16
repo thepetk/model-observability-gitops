@@ -4,4 +4,5 @@ resources:
   - namespace.yaml
   - grafana
   - rhoai-models-registry
+  - slack-webhook-proxy
   # - ai-providers
