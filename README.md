@@ -48,8 +48,11 @@ Keys:
 
 ### Alerting
 
+The `webhook-secret` must exist in each namespace that has alert rules:
+
 ```
-model-monitoring/webhook-secret
+vllm/webhook-secret
+rolling-demo-ns/webhook-secret
 ```
 
 Keys:
@@ -87,11 +90,11 @@ Keys:
          enableAlertmanagerConfig: true
    EOF
    ```
-4. Create the **webhook secret** with your Slack Workflow webhook URL:
+4. Create the **webhook secret** in each namespace that has alert rules:
    ```bash
-   oc create secret generic webhook-secret \
-     -n model-monitoring \
-     --from-literal=webhook-url='https://hooks.slack.com/triggers/YOUR/WORKFLOW/URL'
+   WEBHOOK_URL='https://hooks.slack.com/triggers/YOUR/WORKFLOW/URL'
+   oc create secret generic webhook-secret -n vllm --from-literal=webhook-url="$WEBHOOK_URL"
+   oc create secret generic webhook-secret -n rolling-demo-ns --from-literal=webhook-url="$WEBHOOK_URL"
    ```
 5. Apply Argo CD Project + Application from `argocd/`
 

@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
   name: slack-alert-config
-  namespace: vllm
+  namespace: rolling-demo-ns
 spec:
   route:
     groupBy:

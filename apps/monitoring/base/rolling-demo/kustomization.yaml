@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - rolling-demo-servicemonitor.yaml
   - rolling-demo-prometheus-rules.yaml
+  - alertmanager-config.yaml
