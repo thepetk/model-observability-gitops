@@ -1,5 +1,0 @@
-namespace:
-  - path: metadata/namespace
-    create: true
-    group: monitoring.coreos.com
-    kind: PrometheusRule
