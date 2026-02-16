@@ -53,7 +53,6 @@ model-monitoring/webhook-secret
 Keys:
 
 - `webhook-url`
-- `webhook-channel`
 
 ## Installation
 
