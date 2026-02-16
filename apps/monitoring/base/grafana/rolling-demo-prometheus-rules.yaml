@@ -3,8 +3,6 @@ kind: PrometheusRule
 metadata:
   name: rolling-demo-rules
   namespace: model-monitoring
-  labels:
-    openshift.io/prometheus-rule-evaluation-scope: leaf-prometheus
 spec:
   groups:
     - name: rolling-demo.health
