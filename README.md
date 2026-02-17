@@ -1,6 +1,6 @@
-# Model Observability GitOps
+# DevCluster Monitoring GitOps
 
-This repository manages an end-to-end observability stack for:
+This repository manages an end-to-end monitoring stack for:
 
 - Openshift AI Deployed models.
 - Red Hat Developer Hub deployments.
