@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: dcgm-exporter
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   labels:
     app: dcgm-exporter
 spec:

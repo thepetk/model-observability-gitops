@@ -6,7 +6,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: slack-webhook-proxy
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   labels:
     app: slack-webhook-proxy
 spec:

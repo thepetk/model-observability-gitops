@@ -16,5 +16,5 @@ spec:
   receivers:
     - name: slack-receiver
       webhookConfigs:
-        - url: http://slack-webhook-proxy.model-monitoring.svc.cluster.local:8080/webhook
+        - url: http://slack-webhook-proxy.devcluster-monitoring.svc.cluster.local:8080/webhook
           sendResolved: true

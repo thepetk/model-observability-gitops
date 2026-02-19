@@ -2,7 +2,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
   name: prometheus
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -34,7 +34,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
   name: prometheus-user-workload
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
 spec:
   instanceSelector:
     matchLabels:

@@ -2,7 +2,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: rolling-demo-health
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:

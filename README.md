@@ -12,7 +12,7 @@ This repository manages an end-to-end monitoring stack for:
 #### Grafana
 
 - Managed by the [Grafana Operator](https://github.com/grafana/grafana-operator) (`grafana.integreatly.org/v1beta1`)
-- Runs in `model-monitoring` namespace
+- Runs in `devcluster-monitoring` namespace
 - Dashboards are declared as `GrafanaDashboard` CRDs (see [grafana dir](./apps/monitoring/base/grafana/))
 - Prometheus datasource is configured via `GrafanaDatasource` CRD (`https://prometheus-k8s.openshift-monitoring.svc:9091`)
 
@@ -38,7 +38,7 @@ These Secrets are NOT managed by this repo and must exist before Argo CD sync:
 ### Grafana
 
 ```
-model-monitoring/grafana-admin
+devcluster-monitoring/grafana-admin
 ```
 
 Keys:
@@ -49,7 +49,7 @@ Keys:
 ### Slack Webhook Proxy
 
 ```
-model-monitoring/webhook-secret
+devcluster-monitoring/webhook-secret
 ```
 
 Keys:
@@ -90,7 +90,7 @@ Keys:
 4. Create the **webhook secret** for the slack-webhook-proxy:
    ```bash
    WEBHOOK_URL='https://hooks.slack.com/triggers/YOUR/WORKFLOW/URL'
-   oc create secret generic webhook-secret -n model-monitoring --from-literal=webhook-url="$WEBHOOK_URL"
+   oc create secret generic webhook-secret -n devcluster-monitoring --from-literal=webhook-url="$WEBHOOK_URL"
    ```
 5. Apply Argo CD Project + Application from `argocd/`
 

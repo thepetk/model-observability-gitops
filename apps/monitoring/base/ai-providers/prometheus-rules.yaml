@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: robotheus-rules
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
 spec:
   groups:
     - name: robotheus.health

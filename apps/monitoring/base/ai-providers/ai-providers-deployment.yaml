@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: robotheus-exporter
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   labels:
     app: robotheus-exporter
 spec:

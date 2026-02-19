@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: robotheus
-  namespace: model-monitoring
+  namespace: devcluster-monitoring
   labels:
     app: robotheus
 spec:
