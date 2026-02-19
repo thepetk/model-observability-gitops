@@ -11,6 +11,28 @@ spec:
   config:
     log:
       mode: console
+    auth:
+      disable_login_form: "false"
+      disable_signout_menu: "false"
+    auth.anonymous:
+      enabled: "false"
+    auth.generic_oauth:
+      enabled: "true"
+      name: Keycloak
+      allow_sign_up: "false"
+      auto_login: "true"
+      scopes: openid email profile offline_access
+      email_attribute_path: email
+      login_attribute_path: username
+      name_attribute_path: full_name
+      skip_org_role_sync: "true"
+      use_refresh_token: "true"
+    users:
+      auto_assign_org: "true"
+      auto_assign_org_role: Viewer
+      viewers_can_edit: "false"
+    rbac:
+      permission_cache: "true"
   deployment:
     spec:
       template:
@@ -18,16 +40,31 @@ spec:
           containers:
             - name: grafana
               env:
-                - name: GF_SECURITY_ADMIN_USER
+                - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
-                      name: grafana-admin
-                      key: username
-                - name: GF_SECURITY_ADMIN_PASSWORD
+                      name: keycloak-secrets
+                      key: client_id
+                - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
                   valueFrom:
                     secretKeyRef:
-                      name: grafana-admin
-                      key: password
+                      name: keycloak-secrets
+                      key: client_secret
+                - name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak-secrets
+                      key: auth_url
+                - name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak-secrets
+                      key: token_url
+                - name: GF_AUTH_GENERIC_OAUTH_API_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak-secrets
+                      key: api_url
               resources:
                 requests:
                   cpu: 100m
