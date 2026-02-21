@@ -59,7 +59,8 @@ Keys:
 ## Installation
 
 1. Ensure the **Grafana Operator** and **Prometheus Operator** are installed on the cluster.
-2. Enable **user-workload monitoring** on the cluster (required for ServiceMonitor scraping in user namespaces):
+2. Ensure the `devcluster-monitoring` and `vllm` namespaces already exist in your cluster.
+3. Enable **user-workload monitoring** on the cluster (required for ServiceMonitor scraping in user namespaces):
    ```bash
    oc apply -f - <<EOF
    apiVersion: v1
@@ -72,7 +73,7 @@ Keys:
        enableUserWorkload: true
    EOF
    ```
-3. Enable **user-workload Alertmanager** (required for `AlertmanagerConfig` routing to Slack):
+4. Enable **user-workload Alertmanager** (required for `AlertmanagerConfig` routing to Slack):
    ```bash
    oc apply -f - <<EOF
    apiVersion: v1
@@ -87,12 +88,18 @@ Keys:
          enableAlertmanagerConfig: true
    EOF
    ```
-4. Create the **webhook secret** for the slack-webhook-proxy:
+5. Create the **webhook-secret** for the slack-webhook-proxy:
    ```bash
    WEBHOOK_URL='https://hooks.slack.com/triggers/YOUR/WORKFLOW/URL'
    oc create secret generic webhook-secret -n devcluster-monitoring --from-literal=webhook-url="$WEBHOOK_URL"
    ```
-5. Apply Argo CD Project + Application from `argocd/`
+6. Create the **grafana-admin** to store your admin's credentials:
+   ```bash
+   USERNAME='your-admins-username'
+   PASSWORD='your-admins-password'
+   oc create secret generic grafana-admin -n devcluster-monitoring --from-literal=username="$USERNAME" --from-literal=password="$PASSWORD"
+   ```
+7. Apply Argo CD Project + Application from `argocd/`
 
 ## Contirbutions
 
