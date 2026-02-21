@@ -46,6 +46,20 @@ Keys:
 - `username`
 - `password`
 
+### Keycloak OAuth
+
+```
+devcluster-monitoring/keycloak-secrets
+```
+
+Keys:
+
+- `client_id`
+- `client_secret`
+- `auth_url` — the Keycloak authorization endpoint (`https://<KEYCLOAK_HOST>/realms/<REALM>/protocol/openid-connect/auth`)
+- `token_url` — the Keycloak token endpoint (`https://<KEYCLOAK_HOST>/realms/<REALM>/protocol/openid-connect/token`)
+- `api_url` — the Keycloak userinfo endpoint (`https://<KEYCLOAK_HOST>/realms/<REALM>/protocol/openid-connect/userinfo`)
+
 ### Slack Webhook Proxy
 
 ```
@@ -99,7 +113,19 @@ Keys:
    PASSWORD='your-admins-password'
    oc create secret generic grafana-admin -n devcluster-monitoring --from-literal=username="$USERNAME" --from-literal=password="$PASSWORD"
    ```
-7. Apply Argo CD Project + Application from `argocd/`
+7. Create the **keycloak-secrets** for Grafana OAuth integration with Keycloak:
+   ```bash
+   KEYCLOAK_HOST='your-keycloak-host'
+   REALM='your-realm'
+   oc create secret generic keycloak-secrets -n devcluster-monitoring \
+     --from-literal=client_id="grafana-oauth" \
+     --from-literal=client_secret="your-client-secret" \
+     --from-literal=auth_url="https://${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/auth" \
+     --from-literal=token_url="https://${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/token" \
+     --from-literal=api_url="https://${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/userinfo"
+   ```
+   > **Note:** Users must be manually created in Grafana before they can log in via Keycloak. Keycloak authentication does **not** auto-provision new users (`allow_sign_up` is disabled).
+8. Apply Argo CD Project + Application from `argocd/`
 
 ## Contirbutions
 
