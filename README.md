@@ -118,7 +118,7 @@ Keys:
    KEYCLOAK_HOST='your-keycloak-host'
    REALM='your-realm'
    oc create secret generic keycloak-secrets -n devcluster-monitoring \
-     --from-literal=client_id="grafana-oauth" \
+     --from-literal=client_id="your-client-id" \
      --from-literal=client_secret="your-client-secret" \
      --from-literal=auth_url="https://${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/auth" \
      --from-literal=token_url="https://${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/token" \
