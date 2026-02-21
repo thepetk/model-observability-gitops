@@ -21,6 +21,7 @@ spec:
         {
           "type": "stat",
           "title": "Exporter Health",
+          "datasource": { "type": "prometheus", "uid": "prometheus-user-workload" },
           "description": "Whether the robotheus exporter is running and being scraped by Prometheus. 1 = healthy, 0 = down.",
           "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
           "fieldConfig": {
@@ -43,6 +44,7 @@ spec:
           "type": "timeseries",
           "title": "OpenAI Token Throughput",
           "description": "Rate of tokens (input + output combined) consumed across all OpenAI API calls, measured over a 5-minute rolling window.",
+          "datasource": { "type": "prometheus", "uid": "prometheus-user-workload" },
           "gridPos": { "x": 6, "y": 0, "w": 18, "h": 9 },
           "fieldConfig": {
             "defaults": { "unit": "tokens/s", "custom": { "fillOpacity": 15 } }
@@ -59,6 +61,7 @@ spec:
           "type": "stat",
           "title": "Cost Today",
           "description": "Total OpenAI spend (USD) accumulated since midnight UTC, summed across all projects.",
+          "datasource": { "type": "prometheus", "uid": "prometheus-user-workload" },
           "gridPos": { "x": 0, "y": 9, "w": 6, "h": 9 },
           "fieldConfig": {
             "defaults": {
@@ -77,6 +80,7 @@ spec:
         {
           "type": "timeseries",
           "title": "OpenAI Tokens by Project",
+          "datasource": { "type": "prometheus", "uid": "prometheus-user-workload" },
           "description": "Token consumption rate broken down by OpenAI project, showing which project is driving the most API usage.",
           "gridPos": { "x": 6, "y": 9, "w": 18, "h": 9 },
           "fieldConfig": {
