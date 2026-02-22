@@ -18,6 +18,8 @@ spec:
       containers:
         - name: exporter
           image: ghcr.io/thepetk/robotheus:v0.1.7
+          args:
+            - --log.level=debug
           ports:
             - name: metrics
               containerPort: 9185
